@@ -2,7 +2,7 @@ package com.stock.intrinio.model
 
 final case class New(id: String,
                title: String,
-               publicationDate: String,
+               publication_date: String,
                summary: String)
 
 final case class Company(id: String,

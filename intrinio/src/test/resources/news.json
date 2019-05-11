@@ -1,5 +1,4 @@
-{
-  "news": [
+[
     {
       "id": "nws_034QGw",
       "title": "Spotify’s Stock Is Risky Because the Music Industry Is Not Changing Fast Enough",
@@ -70,13 +69,4 @@
       "url": "https://finance.yahoo.com/news/why-intel-apos-smartphone-strategy-120000811.html?.tsrc=rss",
       "summary": "The chipmaker’s second act in smartphones comes to an abrupt end as Apple switches to Qualcomm."
     }
-  ],
-  "company": {
-    "id": "com_NX6GzO",
-    "ticker": "AAPL",
-    "name": "Apple Inc",
-    "lei": "HWUPKR0MPOU8FGXBT394",
-    "cik": "0000320193"
-  },
-  "next_page": "MjAxOS0wNC0xOSAxMjowMDowMCBVVEN8NDc0MDQ0OQ=="
-}
+  ]

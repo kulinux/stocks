@@ -36,23 +36,20 @@ trait ParseHttp extends JsonSupport {
   def http(): Future[HttpResponse]
 
   def news(): Source[New, _] = {
-    val fut =
-      newsFut()
-      .flatMap(x => x)
-    Source.fromFuture(fut)
+    Source.fromFutureSource(newsFut())
   }
 
   def newsFut() = {
-    http()
-      .map(resp => source(resp) )
+    for{
+      http <- http()
+      entsFut <- unmarshalled(http)
+    } yield entsFut
   }
 
-  def unmarshalled(response: HttpResponse) =
+  def unmarshalled(response: HttpResponse) = {
     Unmarshal(response)
-      .to[New]
-
-  def source(response: HttpResponse) =
-    unmarshalled(response)
+      .to[Source[New, NotUsed]]
+  }
 
 
 

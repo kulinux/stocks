@@ -18,7 +18,7 @@ class StreamSpec
   val testSystem: ActorSystem = system
 
   val json = io.Source
-    .fromInputStream(getClass.getResourceAsStream("/news2.json"))
+    .fromInputStream(getClass.getResourceAsStream("/news.json"))
     .mkString
 
   "Http" must {
@@ -40,7 +40,7 @@ class StreamSpec
       }
 
       implicit val mat = ActorMaterializer()
-      val matFlow = parseHttp.news().to(Sink.foreach(println))
+      val matFlow = parseHttp.news().to(Sink.foreach(x => println(s"New $x")))
       matFlow.run()
 
       Thread.sleep(10000)
