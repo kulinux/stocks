@@ -24,7 +24,7 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val companyFormat = jsonFormat5(Company)
 }
 
-trait ParseHttp extends JsonSupport {
+trait ParseHttpArray extends JsonSupport {
 
   implicit val system: ActorSystem
   lazy implicit val materializer = ActorMaterializer()
@@ -41,14 +41,13 @@ trait ParseHttp extends JsonSupport {
 
   def newsFut() = {
     for{
-      http <- http()
-      entsFut <- unmarshalled(http)
+      response <- http()
+      entsFut <- unmarshall(response)
     } yield entsFut
   }
 
-  def unmarshalled(response: HttpResponse) = {
-    Unmarshal(response)
-      .to[Source[New, NotUsed]]
+  def unmarshall(response: HttpResponse) = {
+    Unmarshal(response).to[Source[New, NotUsed]]
   }
 
 
@@ -58,7 +57,7 @@ trait ParseHttp extends JsonSupport {
 
 class ReadHttp(implicit aSystem: ActorSystem,
                url: String,
-               key: String ) extends ParseHttp {
+               key: String ) extends ParseHttpArray {
 
   override val system = aSystem
 

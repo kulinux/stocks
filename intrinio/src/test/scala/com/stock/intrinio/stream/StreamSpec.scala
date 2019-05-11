@@ -24,7 +24,7 @@ class StreamSpec
   "Http" must {
     "Parse request" in {
 
-      val parseHttp = new ParseHttp {
+      val parseHttp = new ParseHttpArray {
         override implicit val system:ActorSystem = testSystem
 
         override def http(): Future[HttpResponse] = {
