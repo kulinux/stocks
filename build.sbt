@@ -28,7 +28,8 @@ lazy val intrinio = project
     assemblySettings,
     libraryDependencies ++= commonDependencies ++ Seq(
       dependencies.akkaHttp,
-      dependencies.sprayJson
+      dependencies.sprayJson,
+      dependencies.jsonStreaming
     )
   )
   .dependsOn(
@@ -42,12 +43,14 @@ lazy val dependencies =
     val akkaV           = "2.5.22"
     val scalatestV      = "3.0.4"
     val akkaHttpV       = "10.1.8"
+    val jsonStreamV     = "1.0.0"
 
     val akka           = "com.typesafe.akka"          %% "akka-stream"             % akkaV
-    val akkaTest       = "com.typesafe.akka"           %% "akka-testkit"            % akkaV
+    val akkaTest       = "com.typesafe.akka"          %% "akka-testkit"            % akkaV
     val akkaHttp       = "com.typesafe.akka"          %% "akka-http"               % akkaHttpV
     val scalatest      = "org.scalatest"              %% "scalatest"               % scalatestV
     val sprayJson      = "com.typesafe.akka"          %% "akka-http-spray-json"    % akkaHttpV
+    val jsonStreaming  = "com.lightbend.akka"         %% "akka-stream-alpakka-json-streaming" % jsonStreamV
   }
 
 lazy val commonDependencies = Seq(

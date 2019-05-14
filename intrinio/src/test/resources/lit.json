@@ -1,0 +1,26 @@
+{
+  "news": [
+    {
+      "id": "nws_6G3Ndp",
+      "title": "SHAREHOLDER ALERT BY FORMER LOUISIANA ATTORNEY GENERAL: KSF REMINDS AAPL, ARA, AMRS, BPI INVESTORS of Lead Plaintiff Deadline in Class Action Lawsuits",
+      "publication_date": "2019-05-04T02:50:00.000Z",
+      "url": "https://finance.yahoo.com/news/shareholder-alert-former-louisiana-attorney-025000593.html?.tsrc=rss",
+      "summary": "NEW ORLEANS, May 03, 2019 -- Kahn Swick & Foti, LLC (â€œKSFâ€) and KSF partner, former Attorney General of Louisiana, Charles C. Foti, Jr., remind investors of pending."
+    },
+    {
+      "id": "nws_N82Nkr",
+      "title": "Apple on Track to Hit 500 Million Paid Subscriptions Next Year",
+      "publication_date": "2019-05-04T00:43:00.000Z",
+      "url": "https://finance.yahoo.com/news/apple-track-hit-500-million-004300705.html?.tsrc=rss",
+      "summary": "If not sooner."
+    }
+  ],
+  "company": {
+    "id": "com_NX6GzO",
+    "ticker": "AAPL",
+    "name": "Apple Inc",
+    "lei": "HWUPKR0MPOU8FGXBT394",
+    "cik": "0000320193"
+  },
+  "next_page": "MjAxOS0wNS0wMiAxNzoxMDo0OSBVVEN8NDgxMjk4NQ=="
+}

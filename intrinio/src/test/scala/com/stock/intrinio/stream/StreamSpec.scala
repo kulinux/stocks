@@ -7,9 +7,9 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
 import akka.testkit.TestKit
 import org.scalatest.{Matchers, WordSpecLike}
+import scala.concurrent.duration._
 
-import scala.collection.parallel.immutable
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
 
 class StreamSpec
   extends TestKit(ActorSystem("MySpec")) with WordSpecLike with  Matchers {
@@ -18,13 +18,13 @@ class StreamSpec
   val testSystem: ActorSystem = system
 
   val json = io.Source
-    .fromInputStream(getClass.getResourceAsStream("/news.json"))
+    .fromInputStream(getClass.getResourceAsStream("/lit.json"))
     .mkString
 
   "Http" must {
     "Parse request" in {
 
-      val parseHttp = new ParseHttpArray {
+      val parseHttp = new ParseNews {
         override implicit val system:ActorSystem = testSystem
 
         override def http(): Future[HttpResponse] = {
@@ -41,7 +41,9 @@ class StreamSpec
 
       implicit val mat = ActorMaterializer()
       val matFlow = parseHttp.news().to(Sink.foreach(x => println(s"New $x")))
-      matFlow.run()
+      val fut = matFlow.run()
+
+      val res = Await.result(fut, 10 seconds)
 
       Thread.sleep(10000)
     }
