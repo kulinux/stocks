@@ -17,8 +17,11 @@ class StreamSpec
 
   val testSystem: ActorSystem = system
 
+  //val File = "/lit.json"
+  val File = "/news2.json"
+
   val json = io.Source
-    .fromInputStream(getClass.getResourceAsStream("/lit.json"))
+    .fromInputStream(getClass.getResourceAsStream(File))
     .mkString
 
   "Http" must {

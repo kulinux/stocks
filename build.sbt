@@ -29,7 +29,8 @@ lazy val intrinio = project
     libraryDependencies ++= commonDependencies ++ Seq(
       dependencies.akkaHttp,
       dependencies.sprayJson,
-      dependencies.jsonStreaming
+      dependencies.jsonStreaming,
+      dependencies.sentimentAnalyzer
     )
   )
   .dependsOn(
@@ -44,6 +45,7 @@ lazy val dependencies =
     val scalatestV      = "3.0.4"
     val akkaHttpV       = "10.1.8"
     val jsonStreamV     = "1.0.0"
+    val sentimentAnalyzerV = "3.9.2"
 
     val akka           = "com.typesafe.akka"          %% "akka-stream"             % akkaV
     val akkaTest       = "com.typesafe.akka"          %% "akka-testkit"            % akkaV
@@ -51,6 +53,7 @@ lazy val dependencies =
     val scalatest      = "org.scalatest"              %% "scalatest"               % scalatestV
     val sprayJson      = "com.typesafe.akka"          %% "akka-http-spray-json"    % akkaHttpV
     val jsonStreaming  = "com.lightbend.akka"         %% "akka-stream-alpakka-json-streaming" % jsonStreamV
+    val sentimentAnalyzer = "edu.stanford.nlp"        % "stanford-corenlp"        % sentimentAnalyzerV artifacts (Artifact("stanford-corenlp", "models"), Artifact("stanford-corenlp"))
   }
 
 lazy val commonDependencies = Seq(
