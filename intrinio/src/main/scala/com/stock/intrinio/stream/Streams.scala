@@ -28,7 +28,7 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 object Sentiments {
   val sentimentsFlow: Flow[New, NewSentiment, NotUsed] = {
     Flow[New]
-      .map(x => NewSentiment(x, SentimentAnalyzer.mainSentiment(x.summary)) )
+      .map(x => NewSentiment(x, SentimentAnalyzer.mainSentiment(x.title)) )
   }
 }
 

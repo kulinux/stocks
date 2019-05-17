@@ -4,12 +4,13 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpHeader, HttpResponse}
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Sink
+import akka.stream.scaladsl.{Keep, Sink}
 import akka.testkit.TestKit
 import org.scalatest.{Matchers, WordSpecLike}
-import scala.concurrent.duration._
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future, Promise}
+import scala.util.{Failure, Success}
 
 class StreamSpec
   extends TestKit(ActorSystem("MySpec")) with WordSpecLike with  Matchers {
@@ -43,12 +44,18 @@ class StreamSpec
       }
 
       implicit val mat = ActorMaterializer()
-      val matFlow = parseHttp.news().to(Sink.foreach(x => println(s"New $x")))
+      val matFlow = parseHttp
+        .news()
+        .log("Error!!!!!")
+        .toMat(Sink.foreach(x => println(s"${x.sentiment} - ${x.item.title}")))(Keep.right)
+
+
       val fut = matFlow.run()
 
-      val res = Await.result(fut, 10 seconds)
+      val res = Await.result(fut, 1000 seconds)
+      println(s"res $res")
 
-      Thread.sleep(10000)
+      //Thread.sleep(100000)
     }
 
   }
