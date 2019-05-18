@@ -1,10 +1,11 @@
 package com.stock.intrinio.stream
 
+import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpHeader, HttpResponse}
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{Keep, Sink}
+import akka.stream.scaladsl.{Keep, Sink, Source}
 import akka.testkit.TestKit
 import com.stock.intrinio.model.{New, StockPrice}
 import org.scalatest.{Matchers, WordSpecLike}
@@ -36,31 +37,33 @@ class StreamSpec
 
   implicit val testSystem: ActorSystem = system
 
-  val File = "/lit.json"
-  //val File = "/new_apple.json"
+  def testParser[T](source: Source[T, _], f: T => Unit): Unit = {
+
+    implicit val mat = ActorMaterializer()
+    val matFlow = source
+      .toMat(Sink.foreach(f))(Keep.right)
+
+
+    val fut = matFlow.run()
+
+    val res = Await.result(fut, 1000 seconds)
+    println(s"res $res")
+
+
+  }
 
 
   "Http" must {
     "Parse request news" in {
 
       val parseHttp = new ParseNews with ParseWithHttp[New] {
-        val file = "/lit.json"
+        val file = "/new_apple.json"
         override implicit val system:ActorSystem = testSystem
       }
 
-      implicit val mat = ActorMaterializer()
-      val matFlow = parseHttp
-        .source()
-        .toMat(Sink.foreach(x => println(s"${x.title}")))(Keep.right)
-
-
-      val fut = matFlow.run()
-
-      val res = Await.result(fut, 1000 seconds)
-      println(s"res $res")
-
+      testParser[New](parseHttp.source(),
+        x => println(s"${x.title}") )
     }
-
   }
 
 
@@ -72,19 +75,9 @@ class StreamSpec
         override implicit val system:ActorSystem = testSystem
       }
 
-      implicit val mat = ActorMaterializer()
-      val matFlow = parseHttp
-        .source()
-        .toMat(Sink.foreach(x => println(s"${x.date} ${x.high}")))(Keep.right)
-
-
-      val fut = matFlow.run()
-
-      val res = Await.result(fut, 1000 seconds)
-      println(s"res $res")
-
+      testParser[StockPrice](parseHttp.source(),
+        x => println(s"${x.date} ${x.high}") )
     }
-
   }
 
 
