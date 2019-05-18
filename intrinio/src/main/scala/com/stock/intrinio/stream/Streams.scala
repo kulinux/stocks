@@ -5,25 +5,17 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.common.{EntityStreamingSupport, JsonEntityStreamingSupport}
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.HttpResponse
-import akka.http.scaladsl.unmarshalling.Unmarshal
+import akka.http.scaladsl.unmarshalling.{Unmarshal, Unmarshaller}
 import akka.stream.ActorMaterializer
 import akka.stream.alpakka.json.scaladsl.JsonReader
 import akka.stream.scaladsl.{Flow, Source}
-import com.stock.intrinio.model.{Company, Item, New, NewSentiment}
+import akka.util.ByteString
+import com.stock.intrinio.model.{New, NewSentiment, StockPrice}
 import com.stock.intrinio.sentiment.SentimentAnalyzer
-import spray.json.DefaultJsonProtocol
+import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
 import scala.concurrent.Future
 
-class Streams {
-  def news(id: String): Source[New, _] = ???
-}
-
-trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
-  implicit val itemFormat = jsonFormat2(Item)
-  implicit val newsFormat = jsonFormat4(New)
-  implicit val companyFormat = jsonFormat5(Company)
-}
 
 object Sentiments {
   val sentimentsFlow: Flow[New, NewSentiment, NotUsed] = {
@@ -32,10 +24,27 @@ object Sentiments {
   }
 }
 
+trait ParseNews extends Parse[New] {
+  val frm = jsonFormat4(New)
+  val path: String = "$.news[*]"
+}
 
-trait ParseNews extends JsonSupport {
+trait ParseStockPrice extends Parse[StockPrice] {
+  val frm = jsonFormat13(StockPrice)
+  val path: String = "$.stock_prices[*]"
+}
+
+
+trait Parse[T]  extends SprayJsonSupport with DefaultJsonProtocol {
 
   implicit val system: ActorSystem
+
+  val frm: RootJsonFormat[T]
+  val path: String
+
+  lazy implicit val um: Unmarshaller[ByteString, T] =
+    SprayJsonSupport.sprayJsonByteStringUnmarshaller(frm)
+
   lazy implicit val materializer = ActorMaterializer()
   lazy implicit val executionContext = system.dispatcher
 
@@ -44,21 +53,21 @@ trait ParseNews extends JsonSupport {
 
   def http(): Future[HttpResponse]
 
-  def news(): Source[NewSentiment, Future[Any]] = {
-    Source.fromFutureSource(newsFut())
-      .via(Sentiments.sentimentsFlow)
+  def source(): Source[T, Future[Any]] = {
+    Source.fromFutureSource(fetchAndUnmarshall())
   }
 
-  def newsFut() = {
+  def fetchAndUnmarshall() = {
     http()
       .map(unmarshall)
   }
 
-  def unmarshall(response: HttpResponse): Source[New, Any] = {
+  def unmarshall(response: HttpResponse): Source[T, Any] = {
     return response.entity.
       dataBytes
-        .via(JsonReader.select("$.news[*]"))
-        .mapAsync(1)( Unmarshal(_).to[New])
+        .log("Error!!!")
+        .via(JsonReader.select(path))
+        .mapAsync(1)( Unmarshal(_).to[T] )
   }
 
 }
